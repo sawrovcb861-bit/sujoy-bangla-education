@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>সুজয়ের সহজ বাংলা শিক্ষা — শিক্ষক ড্যাশবোর্ড</title>
+  <style>
+    :root {
+      --bg: #eef6ff;
+      --panel: #ffffff;
+      --panel-soft: #f8fafc;
+      --line: #dfe7f3;
+      --primary: #4f46e5;
+      --primary-dark: #312e81;
+      --gold: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --rose: #ec4899;
+      --ink: #1f2937;
+      --muted: #64748b;
+      --shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: linear-gradient(135deg, #eef7ff, #fff8de);
+      color: var(--ink);
+      font-family: "Hind Siliguri", "Noto Sans Bengali", "Segoe UI", sans-serif;
+    }
+
+    body {
+      padding: 18px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      min-height: calc(100vh - 36px);
+    }
+
+    .sidebar, .main {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .sidebar {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #7c2d12;
+      padding: 8px 10px;
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .panel-box {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .panel-box h3 {
+      margin: 0 0 12px 0;
+      font-size: 1.15rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    input {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    }
+
+    .primary-btn, .secondary-btn, .danger-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: white;
+    }
+
+    .primary-btn:hover, .secondary-btn:hover, .danger-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .secondary-btn {
+      background: #edf2ff;
+      color: var(--primary);
+    }
+
+    .danger-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .student-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 2px 10px 2px;
+    }
+
+    .student-list-header h3 {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .chip {
+      background: #ecfdf5;
+      color: #15803d;
+      font-size: 0.77rem;
+      font-weight: 800;
+      padding: 7px 9px;
+      border-radius: 999px;
+      border: 1px solid #86efac;
+    }
+
+    .student-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .student-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .student-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.04);
+    }
+
+    .student-card.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, #eef2ff, #f8faff);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+    }
+
+    .student-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(135deg, #f59e0b, #ef4444);
+    }
+
+    .avatar.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+    .avatar.green { background: linear-gradient(135deg, #22c55e, #10b981); }
+    .avatar.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+    .avatar.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+
+    .student-name {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .student-score {
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .main {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      padding: 6px 4px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 2.6vw, 2.8rem);
+      line-height: 1.1;
+      font-weight: 900;
+    }
+
+    .title-wrap p {
+      margin: 6px 0 0 0;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      min-width: 150px;
+      background: linear-gradient(135deg, #eff6ff, #f8fafc);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .stat-value {
+      margin-top: 6px;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 1.2fr 0.9fr;
+      gap: 18px;
+      min-height: 620px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tab {
+      border: none;
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 10px 14px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--primary), #7c3aed);
+      color: white;
+    }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .lesson-card {
+      background: linear-gradient(135deg, #fff, #f8fbff);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .lesson-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.05);
+    }
+
+    .lesson-card.active {
+      border: 2px solid var(--primary);
+      background: linear-gradient(135deg, #eef2ff, #f8faff);
+    }
+
+    .lesson-icon {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    .lesson-card h4 {
+      margin: 0 0 6px 0;
+      font-size: 1.08rem;
+    }
+
+    .lesson-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .lesson-hero {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, #f8fbff, #fff7ed);
+    }
+
+    .hero-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-head h3 {
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    .highlight-box {
+      margin-top: 14px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .highlight-box h4 {
+      margin: 0 0 8px 0;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    .word-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .word {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 800;
+      color: #2e2e2e;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .primary-wide {
+      width: auto;
+      padding: 12px 18px;
+    }
+
+    .student-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .student-hero {
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, #ecfeff, #f8fafc);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .student-hero-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .selected-name {
+      margin-top: 8px;
+      font-size: 1.9rem;
+      font-weight: 900;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), #38bdf8, var(--gold));
+      transition: 0.3s ease;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .mini-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .mini-label {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+
+    .mini-value {
+      margin-top: 6px;
+      font-size: 1.22rem;
+      font-weight: 900;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .badge.green { background: #dcfce7; color: #166534; border-color: #86efac; }
+    .badge.blue { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+    .badge.pink { background: #fce7f3; color: #9d174d; border-color: #f9a8d4; }
+
+    .summary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      font-weight: 800;
+    }
+
+    .empty-state {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 180px;
+      border: 1.5px dashed var(--line);
+      border-radius: 18px;
+      color: var(--muted);
+      background: white;
+      text-align: center;
+      padding: 24px;
+      font-weight: 700;
+    }
+
+    .tab-view {
+      display: none;
+    }
+
+    .tab-view.active {
+      display: block;
+    }
+
+    .quiz-box {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fffaf0;
+    }
+
+    .quiz-box h4 {
+      margin: 0 0 12px 0;
+      font-size: 1.25rem;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 8px;
+    }
+
+    .answer-btn {
+      text-align: left;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+    }
+
+    .answer-btn:hover {
+      border-color: #94a3b8;
+    }
+
+    .answer-btn.correct {
+      background: #dcfce7;
+      border-color: #86efac;
+      color: #166534;
+    }
+
+    .answer-btn.wrong {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .explain {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.7);
+      border: 1px dashed var(--line);
+      color: #374151;
+      font-weight: 700;
+      display: none;
+    }
+
+    .explain.show {
+      display: block;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .report-box {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+    }
+
+    .report-box h5 {
+      margin: 0 0 8px 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .metric {
+      font-size: 1.7rem;
+      font-weight: 900;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .lesson-grid { grid-template-columns: 1fr; }
+      .mini-grid { grid-template-columns: 1fr 1fr; }
+      .report-grid { grid-template-columns: 1fr; }
+      .title-wrap h1 { font-size: 1.75rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-title">📚 সুজয়ের</div>
+        <div class="brand-badge">ক্লাস</div>
+      </div>
+
+      <div class="panel-box">
+        <h3>বাচ্চা যোগ করুন</h3>
+        <div class="field">
+          <label>নাম</label>
+          <input id="studentName" type="text" placeholder="যেমন: আরাফ, রিয়া" />
+        </div>
+        <div class="field">
+          <label>বয়স</label>
+          <input id="studentAge" type="number" min="4" max="15" value="7" />
+        </div>
+        <button id="addStudentBtn" class="primary-btn">+ বাচ্চা যোগ করুন</button>
+      </div>
+
+      <div class="student-list-header">
+        <h3>ক্লাসের তালিকা</h3>
+        <span id="studentCount" class="chip">০ জন</span>
+      </div>
+
+      <div id="studentList" class="student-list"></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title-wrap">
+          <h1>সুজয়ের সহজ বাংলা শিক্ষা</h1>
+          <p>শিক্ষক ড্যাশবোর্ড • অফলাইন ক্লাসরুম</p>
+        </div>
+
+        <div class="stats">
+          <div class="stat-box">
+            <div class="stat-label">মোট বাচ্চা</div>
+            <div id="totalStudents" class="stat-value">০</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">গড় স্কোর</div>
+            <div id="avgScore" class="stat-value">০%</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">আজকের অগ্রগতি</div>
+            <div id="overallProgress" class="stat-value">০%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="tabs">
+            <button class="tab active" data-tab="teach">শেখানো</button>
+            <button class="tab" data-tab="quiz">পরীক্ষা</button>
+            <button class="tab" data-tab="report">অগ্রগতি</button>
+          </div>
+
+          <div id="teachTab" class="tab-view active">
+            <div id="lessonGrid" class="lesson-grid"></div>
+
+            <div class="lesson-hero">
+              <div class="hero-head">
+                <h3 id="lessonTitle">একটি পাঠ বেছে নিন</h3>
+                <button id="speakLessonBtn" class="secondary-btn">🔊 পড়ুন</button>
+              </div>
+
+              <div class="highlight-box">
+                <h4>গুরুত্বপূর্ণ শব্দ</h4>
+                <div id="wordList" class="word-list"></div>
+              </div>
+
+              <div class="action-row">
+                <button id="markLessonDoneBtn" class="primary-btn primary-wide">✅ পাঠটি শিখানো হয়েছে</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="quizTab" class="tab-view">
+            <div class="quiz-box">
+              <h4>দ্রুত পরীক্ষা</h4>
+              <div id="quizQuestion" class="question">কোনো প্রশ্ন নির্বাচন করা হ��নি</div>
+              <div id="quizAnswers" class="answers"></div>
+              <div id="quizExplain" class="explain"></div>
+              <div style="margin-top: 12px;">
+                <button id="freshQuizBtn" class="secondary-btn">🔄 নতুন পরীক্ষা</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="reportTab" class="tab-view">
+            <div class="report-grid">
+              <div class="report-box">
+                <h5>সর্বোচ্চ স্কোর</h5>
+                <div id="bestScore" class="metric">০</div>
+              </div>
+              <div class="report-box">
+                <h5>কমপ্লিট লেসন</h5>
+                <div id="completedLessons" class="metric">০</div>
+              </div>
+              <div class="report-box">
+                <h5>পাঠের গড় অগ্রগতি</h5>
+                <div id="avgProgress" class="metric">০%</div>
+              </div>
+              <div class="report-box">
+                <h5>বন্ধুদের মধ্যে</h5>
+                <div id="rankText" class="metric">—</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel student-panel">
+          <div class="student-hero">
+            <div class="student-hero-head">
+              <div style="font-size: 0.8rem; color: var(--muted); font-weight: 800;">নির্বাচিত বাচ্চা</div>
+              <span id="selectedBadge" class="chip">নির্বাচিত নয়</span>
+            </div>
+
+            <div id="selectedStudentName" class="selected-name">কোনো বাচ্চা নির্বাচন করুন</div>
+
+            <div class="progress-bar">
+              <div id="selectedProgress" class="progress-fill"></div>
+            </div>
+
+            <div class="mini-grid">
+              <div class="mini-box">
+                <div class="mini-label">স্কোর</div>
+                <div id="selectedScore" class="mini-value">০</div>
+              </div>
+              <div class="mini-box">
+                <div class="mini-label">স্ট্রিক</div>
+                <div id="selectedStreak" class="mini-value">০</div>
+              </div>
+              <div class="mini-box">
+                <div class="mini-label">পাঠ</div>
+                <div id="selectedLessonCount" class="mini-value">০</div>
+              </div>
+            </div>
+
+            <div id="selectedBadges" class="badges"></div>
+          </div>
+
+          <div class="panel" style="padding: 16px; background: var(--panel-soft);">
+            <h3 style="margin: 0 0 12px;">ক্লাসের দ্রুত সারাংশ</h3>
+            <div id="summaryList" class="summary-list"></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'sujoy_classroom_offline_v1';
+
+    const lessons = [
+      {
+        id: 'swar',
+        title: 'স্বরবর্ণ',
+        icon: '🔤',
+        description: 'অ, আ, ই, ঈ, উ, ঊ, ঋ, এ, ঐ, ও, ঔ',
+        words: ['অলি', 'আম', 'ইলিশ', 'ঈগল', 'উট', 'ঊষা', 'ঋষি', 'এল', 'ঐশ্বর্য', 'ওর', 'ঔষধ'],
+        note: 'স্বরবর্ণের প্রশিক্ষণ দিয়ে বাচ্চারা শুদ্ধ বাংলায় কথা বলা শিখবে।'
+      },
+      {
+        id: 'kar',
+        title: 'কার-চিহ্ন',
+        icon: '✍️',
+        description: 'া, ি, ী, ু, ূ, ৃ, ে, ৈ, ো, ৌ',
+        words: ['কা', 'কি', 'কী', 'কু', 'কূ', 'কৃ', 'কে', 'কৈ', 'কো', 'কৌ'],
+        note: 'কার-চিহ্ন যুক্ত করে শব্দের গঠন ও উচ্চারণ ঠিক হয়।'
+      },
+      {
+        id: 'byanjan',
+        title: 'ব্যঞ্জনবর্ণ',
+        icon: '📖',
+        description: 'ক থেকে ঁ পর্যন্ত ব্যঞ্জনবর্ণ',
+        words: ['কাঠি', 'গরু', 'চাঁদ', 'জল', 'তাল', 'দরজা', 'পা���ি', 'বই', 'মাছি', 'শিক্ষক'],
+        note: 'ব্যঞ্জনবর্ণের সঠিক শুনতে ও লিখতে পারা খুব গুরুত্বপূর্ণ।'
+      },
+      {
+        id: 'shabda',
+        title: 'শব্দ গঠন',
+        icon: '🧩',
+        description: 'দুই-তিন বর্ণের সহজ শব্দ',
+        words: ['বই', 'ঘর', 'কলম', 'গরম', 'নরম', 'দুই', 'চরণ', 'ভবন', 'ধর', 'পথ'],
+        note: 'সঠিক শব্দ গঠন করে পড়া ও লেখা সহজ হয়।'
+      },
+      {
+        id: 'story',
+        title: 'গল্প ও অনুধাবন',
+        icon: '📚',
+        description: 'ছোট গল্প, অর্থ বুঝে পড়া',
+        words: ['মাছি', 'বাবা', 'দুধ', 'আলো', 'ভালো', 'গল্প', 'শিক্ষা', 'সততা'],
+        note: 'গল্প পড়লে ভাষা বুঝতে ও অর্থ মনে রাখতে সুবিধা হয়।'
+      },
+      {
+        id: 'opposite',
+        title: 'বিপরীত শব্দ',
+        icon: '⚖️',
+        description: 'দিন-রাত, বড়-ছোট, ��ালো-মন্দ',
+        words: ['দিন', 'রাত', 'ভালো', 'মন্দ', 'বড়', 'ছোট', 'উঁচু', 'নিচু', 'আলো', 'আঁধার'],
+        note: 'বিপরীত শব্দ শেখা ভাষার ভাণ্ডারকে সমৃদ্ধ করে।'
+      }
+    ];
+
+    const questionBank = [
+      { q: 'আম শব্দে কোন বর্ণটি আছে?', options: ['অ', 'আ', 'ই', 'উ'], answer: 'আ', explain: 'আম শব্দের শুরুতে "আ" বর্ণ আছে।' },
+      { q: 'কোনটি ব্যঞ্জনবর্ণ?', options: ['আ', 'ই', 'ক', 'এ'], answer: 'ক', explain: 'ক ব্যঞ্জনবর্ণ, অন্যগুলো স্বরবর্ণ।' },
+      { q: "'বই' শব্দের প্রথম বর্ণ কোনটি?", options: ['ব', 'ক', 'গ', 'ম'], answer: 'ব', explain: "'বই' শব্দের প্রথম বর্ণ হল 'ব'।" },
+      { q: "'পাখি' শব্দে ই-কার আছে কি?", options: ['হ্যাঁ', 'না'], answer: 'হ্যাঁ', explain: "'পাখি' শব্দে ই-কার আছে।" },
+      { q: 'বিপরীত শব্দের জোড়া কোনটি সঠিক?', options: ['দিন - রাত', 'বড় - ছোট', 'ভালো - মন্দ', 'সবগুলো'], answer: 'সবগুলো', explain: 'সবগুলোই সঠিক বিপরীত শব্দের উদাহরণ।' },
+      { q: 'কোনটি কার-চিহ্ন?', options: ['া', 'ম', 'হ', 'দ'], answer: 'া', explain: 'া হল কার-চিহ্ন।' }
+    ];
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return {
+          students: [],
+          selectedStudentId: null,
+          selectedLessonId: lessons[0].id
+        };
+      }
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        return {
+          students: [],
+          selectedStudentId: null,
+          selectedLessonId: lessons[0].id
+        };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    let state = loadState();
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    }
+
+    function getAvatarColor(index) {
+      const colors = ['blue', 'green', 'pink', 'purple'];
+      return colors[index % colors.length];
+    }
+
+    function renderStudentList() {
+      const list = document.getElementById('studentList');
+      list.innerHTML = '';
+
+      if (!state.students.length) {
+        list.innerHTML = '<div class="empty-state">কোনো বাচ্চা এখনও যোগ হয়নি।<br>উপরের ফর্ম ব্যবহার করে যোগ করুন।</div>';
+        document.getElementById('studentCount').textContent = '০ জন';
+        return;
+      }
+
+      state.students.forEach((student, index) => {
+        const card = document.createElement('div');
+        card.className = 'student-card' + (student.id === state.selectedStudentId ? ' active' : '');
+        card.innerHTML = `
+          <div class="student-meta">
+            <div class="avatar ${getAvatarColor(index)}">${student.name.charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="student-name">${student.name}</div>
+              <div class="student-score">${student.score || 0}% স্কোর</div>
+            </div>
+          </div>
+          <div class="chip">${student.progress || 0}%</div>
+        `;
+
+        card.addEventListener('click', () => {
+          state.selectedStudentId = student.id;
+          saveState();
+          renderAll();
+        });
+
+        list.appendChild(card);
+      });
+
+      document.getElementById('studentCount').textContent = state.students.length + ' জন';
+    }
+
+    function renderLessonGrid() {
+      const grid = document.getElementById('lessonGrid');
+      grid.innerHTML = '';
+
+      lessons.forEach((lesson) => {
+        const card = document.createElement('div');
+        card.className = 'lesson-card' + (lesson.id === state.selectedLessonId ? ' active' : '');
+        card.innerHTML = `
+          <div class="lesson-icon">${lesson.icon}</div>
+          <h4>${lesson.title}</h4>
+          <p>${lesson.description}</p>
+        `;
+        card.addEventListener('click', () => {
+          state.selectedLessonId = lesson.id;
+          saveState();
+          renderLessonHero();
+          renderLessonGrid();
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    function renderLessonHero() {
+      const lesson = lessons.find(l => l.id === state.selectedLessonId) || lessons[0];
+      document.getElementById('lessonTitle').textContent = lesson.title;
+      const wordList = document.getElementById('wordList');
+      wordList.innerHTML = '';
+      lesson.words.forEach(word => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.textContent = word;
+        wordList.appendChild(span);
+      });
+    }
+
+    function updateSelectedStudentView() {
+      const student = state.students.find(s => s.id === state.selectedStudentId);
+      if (!student) {
+        document.getElementById('selectedStudentName').textContent = 'কোনো বাচ্চা নির্বাচন করুন';
+        document.getElementById('selectedProgress').style.width = '0%';
+        document.getElementById('selectedScore').textContent = '০';
+        document.getElementById('selectedStreak').textContent = '০';
+        document.getElementById('selectedLessonCount').textContent = '০';
+        document.getElementById('selectedBadges').innerHTML = '';
+        document.getElementById('selectedBadge').textContent = 'নির্বাচিত নয়';
+        return;
+      }
+
+      const progressPercent = Number(student.progress || 0);
+      document.getElementById('selectedStudentName').textContent = `${student.name} (${student.age || 7} বছর)`;
+      document.getElementById('selectedProgress').style.width = progressPercent + '%';
+      document.getElementById('selectedScore').textContent = student.score || 0;
+      document.getElementById('selectedStreak').textContent = student.streak || 0;
+      document.getElementById('selectedLessonCount').textContent = student.lessonCount || 0;
+      document.getElementById('selectedBadge').textContent = 'নির্বাচিত';
+
+      const badges = [];
+      if ((student.score || 0) >= 80) badges.push('⭐ দক্ষ');
+      if ((student.progress || 0) >= 60) badges.push('📘 ভালো');
+      if ((student.lessonCount || 0) >= 3) badges.push('🏆 পাঠশেষ');
+      if (!badges.length) badges.push('🌱 নতুন');
+
+      document.getElementById('selectedBadges').innerHTML = badges
+        .map((badge) => {
+          let cls = '';
+          if (badge.includes('দক্ষ')) cls = 'green';
+          else if (badge.includes('ভালো')) cls = 'blue';
+          else if (badge.includes('পাঠশেষ')) cls = 'pink';
+          return `<span class="badge ${cls}">${badge}</span>`;
+        })
+        .join('');
+    }
+
+    function updateStats() {
+      const total = state.students.length;
+      const avgScore = total
+        ? Math.round(state.students.reduce((sum, s) => sum + Number(s.score || 0), 0) / total)
+        : 0;
+      const avgProgress = total
+        ? Math.round(state.students.reduce((sum, s) => sum + Number(s.progress || 0), 0) / total)
+        : 0;
+      const maxLessonCount = total
+        ? Math.max(...state.students.map(s => Number(s.lessonCount || 0)))
+        : 0;
+      const maxScore = total ? Math.max(...state.students.map(s => Number(s.score || 0))) : 0;
+
+      document.getElementById('totalStudents').textContent = total;
+      document.getElementById('avgScore').textContent = avgScore + '%';
+      document.getElementById('overallProgress').textContent = avgProgress + '%';
+      document.getElementById('bestScore').textContent = maxScore + '%';
+      document.getElementById('completedLessons').textContent = maxLessonCount;
+      document.getElementById('avgProgress').textContent = avgProgress + '%';
+      document.getElementById('rankText').textContent = total ? 'এগিয়ে' : '—';
+    }
+
+    function renderSummary() {
+      const summary = document.getElementById('summaryList');
+      if (!state.students.length) {
+        summary.innerHTML = '<div class="empty-state">ক্লাসের বাচ্চা না থাকলে সারাংশ দেখানো যাবে না।</div>';
+        return;
+      }
+
+      const rows = [...state.students]
+        .sort((a, b) => (b.score || 0) - (a.score || 0))
+        .map((s, idx) => `
+          <div class="summary-item">
+            <span>${idx + 1}. ${s.name}</span>
+            <strong style="color: var(--primary);">${s.score || 0}%</strong>
+          </div>
+        `)
+        .join('');
+
+      summary.innerHTML = rows;
+    }
+
+    function speakText(text) {
+      if (!('speechSynthesis' in window)) return;
+      const ut = new SpeechSynthesisUtterance(text);
+      ut.lang = 'bn-BD';
+      ut.rate = 0.9;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(ut);
+    }
+
+    function renderTabs() {
+      const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'teach';
+      document.getElementById('teachTab').classList.toggle('active', activeTab === 'teach');
+      document.getElementById('quizTab').classList.toggle('active', activeTab === 'quiz');
+      document.getElementById('reportTab').classList.toggle('active', activeTab === 'report');
+    }
+
+    function addStudent() {
+      const name = document.getElementById('studentName').value.trim();
+      const age = Number(document.getElementById('studentAge').value) || 7;
+
+      if (!name) {
+        alert('দয়া করে বাচ্চার নাম লিখুন।');
+        return;
+      }
+
+      if (state.students.length >= 10) {
+        alert('একসাথে সর্বোচ্চ ১০ জন বাচ্চা রাখা যাবে।');
+        return;
+      }
+
+      const student = {
+        id: generateId(),
+        name,
+        age,
+        score: 0,
+        progress: 10,
+        lessonCount: 0,
+        streak: 0,
+        badges: []
+      };
+
+      state.students.push(student);
+      state.selectedStudentId = student.id;
+      saveState();
+      renderAll();
+
+      document.getElementById('studentName').value = '';
+      document.getElementById('studentAge').value = 7;
+    }
+
+    function markLessonDone() {
+      const student = state.students.find(s => s.id === state.selectedStudentId);
+      if (!student) {
+        alert('প্রথমে একটি বাচ্চা নির্বাচন করুন।');
+        return;
+      }
+
+      const lesson = lessons.find(l => l.id === state.selectedLessonId) || lessons[0];
+      student.progress = Math.min(100, Number(student.progress || 0) + 12);
+      student.lessonCount = Number(student.lessonCount || 0) + 1;
+      student.streak = Number(student.streak || 0) + 1;
+      student.score = Math.min(100, Number(student.score || 0) + 10);
+      if (!student.badges) student.badges = [];
+      if (!student.badges.includes(lesson.title)) student.badges.push(lesson.title);
+
+      saveState();
+      renderAll();
+      speakText(`ভালো কাজ! ${student.name} ${lesson.title} পাঠটি শিখেছে।`);
+    }
+
+    function renderQuiz() {
+      const q = questionBank[Math.floor(Math.random() * questionBank.length)];
+      const questionEl = document.getElementById('quizQuestion');
+      const answersEl = document.getElementById('quizAnswers');
+      const explainEl = document.getElementById('quizExplain');
+
+      questionEl.textContent = q.q;
+      answersEl.innerHTML = '';
+      explainEl.textContent = '';
+      explainEl.classList.remove('show');
+
+      q.options.forEach((option) => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = option;
+
+        btn.addEventListener('click', () => {
+          const isCorrect = option === q.answer;
+          document.querySelectorAll('.answer-btn').forEach((b) => b.disabled = true);
+
+          if (isCorrect) {
+            btn.classList.add('correct');
+            const student = state.students.find(s => s.id === state.selectedStudentId);
+            if (student) {
+              student.score = Math.min(100, Number(student.score || 0) + 15);
+              student.progress = Math.min(100, Number(student.progress || 0) + 10);
+              student.streak = Number(student.streak || 0) + 1;
+            }
+            speakText('সঠিক উত্তর! ' + q.answer);
+          } else {
+            btn.classList.add('wrong');
+            [...document.querySelectorAll('.answer-btn')].forEach((b) => {
+              if (b.textContent === q.answer) b.classList.add('correct');
+            });
+            speakText('ভুল হয়েছে। সঠিক উত্তর হলো ' + q.answer);
+          }
+
+          explainEl.textContent = q.explain;
+          explainEl.classList.add('show');
+          saveState();
+          renderAll();
+        });
+
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function renderAll() {
+      renderStudentList();
+      renderLessonGrid();
+      renderLessonHero();
+      updateSelectedStudentView();
+      updateStats();
+      renderSummary();
+      renderTabs();
+    }
+
+    document.getElementById('addStudentBtn').addEventListener('click', addStudent);
+    document.getElementById('markLessonDoneBtn').addEventListener('click', markLessonDone);
+    document.getElementById('speakLessonBtn').addEventListener('click', () => {
+      const lesson = lessons.find(l => l.id === state.selectedLessonId) || lessons[0];
+      speakText(`${lesson.title}. ${lesson.note}. ${lesson.words.join(', ')}`);
+    });
+    document.getElementById('freshQuizBtn').addEventListener('click', renderQuiz);
+
+    document.querySelectorAll('.tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderTabs();
+      });
+    });
+
+    renderAll();
+    renderQuiz();
+  </script>
+</body>
+</html>
